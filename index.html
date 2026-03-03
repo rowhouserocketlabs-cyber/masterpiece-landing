@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterpiece Registry — Professional Art Management</title>
+    <meta name="description" content="Inventory management, provenance tracking, and beautiful public portfolios — built for artists, galleries, and collectors.">
+    <meta property="og:title" content="Masterpiece Registry">
+    <meta property="og:description" content="Professional art management for artists, galleries, and collectors.">
+    <meta property="og:image" content="img/logo-white.png">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:       #0c0c0c;
+            --surface:  #141414;
+            --surface2: #1c1c1c;
+            --text:     #f0ebe4;
+            --muted:    #888880;
+            --accent:   #c9a96e;
+            --border:   #252525;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 300;
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── NAV ─────────────────────────────────────────────────── */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1.25rem 2.5rem;
+            background: rgba(12,12,12,0.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .nav-logo { display: flex; align-items: center; text-decoration: none; }
+        .nav-logo img { height: 44px; width: auto; display: block; }
+        .nav-cta {
+            display: inline-block;
+            padding: 0.5rem 1.25rem;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-size: 0.72rem; font-weight: 600;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            text-decoration: none; border-radius: 2px;
+            transition: background .2s, color .2s;
+        }
+        .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+        /* ── HERO ─────────────────────────────────────────────────── */
+        .hero {
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center;
+            padding: 9rem 2rem 5rem;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse 80% 55% at 50% 35%, rgba(201,169,110,0.07) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .hero-eyebrow {
+            font-size: 0.68rem; font-weight: 600;
+            letter-spacing: 0.22em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 1.75rem;
+            display: flex; align-items: center; gap: 0.85rem;
+        }
+        .hero-eyebrow::before, .hero-eyebrow::after {
+            content: ''; display: inline-block;
+            width: 36px; height: 1px;
+            background: var(--accent); opacity: 0.45;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(3rem, 7.5vw, 6.5rem);
+            font-weight: 900; line-height: 1.07;
+            letter-spacing: -0.02em;
+            max-width: 880px; margin-bottom: 1.75rem;
+        }
+        .hero h1 em { font-style: italic; color: var(--accent); }
+        .hero-sub {
+            font-size: clamp(1rem, 2vw, 1.18rem);
+            color: var(--muted); max-width: 520px;
+            margin-bottom: 2.75rem; font-weight: 300; line-height: 1.75;
+        }
+
+        /* ── EMAIL FORM ───────────────────────────────────────────── */
+        .waitlist-wrap { display: flex; flex-direction: column; align-items: center; }
+        .waitlist-form {
+            display: flex; gap: 0; max-width: 460px; width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 3px; overflow: hidden;
+            background: var(--surface);
+        }
+        .waitlist-form input[type=email] {
+            flex: 1; padding: 0.9rem 1.2rem;
+            background: transparent; border: none; outline: none;
+            font-size: 0.9rem; color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+        .waitlist-form input::placeholder { color: var(--muted); }
+        .waitlist-form button {
+            padding: 0.9rem 1.5rem; background: var(--accent);
+            border: none; cursor: pointer;
+            font-size: 0.72rem; font-weight: 600;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--bg); font-family: 'Inter', sans-serif;
+            transition: opacity .2s; white-space: nowrap;
+        }
+        .waitlist-form button:hover { opacity: 0.82; }
+        .form-note { margin-top: 0.7rem; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.03em; }
+        .form-success {
+            display: none; color: var(--accent);
+            font-size: 0.88rem; padding: 0.85rem 0; font-weight: 400;
+        }
+
+        /* ── HERO SCREENSHOT ──────────────────────────────────────── */
+        .hero-screenshot {
+            margin-top: 5rem;
+            max-width: 1020px; width: calc(100% - 2rem);
+        }
+        .screen-frame {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; overflow: hidden;
+            box-shadow: 0 50px 130px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04);
+        }
+        .screen-bar {
+            background: var(--surface2); border-bottom: 1px solid var(--border);
+            padding: 0.65rem 1rem;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-r { background: #ff5f57; }
+        .dot-y { background: #ffbd2e; }
+        .dot-g { background: #28c840; }
+        .screen-frame img { width: 100%; display: block; }
+        /* Placeholder shown while no screenshot */
+        .screen-placeholder {
+            width: 100%; aspect-ratio: 16/9;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #141414 25%, #1e1c18 100%);
+            color: var(--muted); font-size: 0.82rem; letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* ── SECTION BASE ─────────────────────────────────────────── */
+        section { padding: 7rem 2rem; }
+        .container { max-width: 1080px; margin: 0 auto; }
+        .label {
+            font-size: 0.67rem; font-weight: 600;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 1rem;
+        }
+        .title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(1.9rem, 3.8vw, 3rem);
+            font-weight: 700; line-height: 1.18;
+            margin-bottom: 1.1rem;
+        }
+        .body-text {
+            font-size: 1rem; color: var(--muted);
+            max-width: 520px; line-height: 1.8;
+        }
+
+        /* ── FOR WHOM ─────────────────────────────────────────────── */
+        .for-section {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .for-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+        .for-card {
+            padding: 3.5rem 2.5rem;
+            border-right: 1px solid var(--border);
+        }
+        .for-card:last-child { border-right: none; }
+        .for-icon { font-size: 1.5rem; margin-bottom: 1.2rem; display: block; }
+        .for-card h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem;
+        }
+        .for-card > p { font-size: 0.87rem; color: var(--muted); line-height: 1.7; }
+        .for-list { list-style: none; margin-top: 1.25rem; }
+        .for-list li {
+            font-size: 0.8rem; color: var(--muted);
+            padding: 0.3rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 0.55rem;
+        }
+        .for-list li:last-child { border-bottom: none; }
+        .for-list li::before { content: '→'; color: var(--accent); font-size: 0.7rem; flex-shrink: 0; }
+
+        /* ── FEATURES ─────────────────────────────────────────────── */
+        .feature-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem; align-items: center;
+        }
+        .feature-row + .feature-row { margin-top: 7rem; }
+        .feature-row.flip { direction: rtl; }
+        .feature-row.flip > * { direction: ltr; }
+
+        /* ── DIVIDER ──────────────────────────────────────────────── */
+        .rule { border: none; border-top: 1px solid var(--border); margin: 7rem 0 0; }
+
+        /* ── FINAL CTA ────────────────────────────────────────────── */
+        .cta-section {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+        .cta-section .title { max-width: 680px; margin: 0 auto 1rem; }
+        .cta-section .body-text { margin: 0 auto 2.5rem; }
+        .cta-section .waitlist-form { margin: 0 auto; }
+
+        /* ── FOOTER ───────────────────────────────────────────────── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem 2.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 1rem;
+        }
+        .footer-logo img { height: 36px; width: auto; display: block; opacity: 0.6; }
+        .footer-logo img:hover { opacity: 1; transition: opacity .2s; }
+        footer p { font-size: 0.75rem; color: var(--muted); }
+        footer a { color: var(--muted); text-decoration: none; }
+        footer a:hover { color: var(--text); }
+
+        /* ── RESPONSIVE ───────────────────────────────────────────── */
+        @media (max-width: 820px) {
+            .for-grid { grid-template-columns: 1fr; }
+            .for-card { border-right: none; border-bottom: 1px solid var(--border); }
+            .for-card:last-child { border-bottom: none; }
+            .feature-row, .feature-row.flip { grid-template-columns: 1fr; direction: ltr; gap: 2.5rem; }
+            section { padding: 4.5rem 1.5rem; }
+            .rule { margin: 4.5rem 0 0; }
+            .feature-row + .feature-row { margin-top: 4.5rem; }
+        }
+        @media (max-width: 500px) {
+            .nav { padding: 1rem 1.25rem; }
+            .hero { padding: 7rem 1.25rem 4rem; }
+            .waitlist-form { flex-direction: column; border-radius: 4px; }
+            .waitlist-form button { border-radius: 0; padding: 0.85rem; }
+            footer { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+    <a href="#" class="nav-logo"><img src="img/logo.png" alt="Masterpiece Registry"></a>
+    <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+    <img src="img/logo.png" alt="Masterpiece Registry" style="height:120px; width:auto; margin-bottom:2rem;">
+    <div class="hero-eyebrow">Now in Development</div>
+    <h1>Your Art.<br><em>Professionally</em> Managed.</h1>
+    <p class="hero-sub">
+        Inventory management, provenance tracking, and beautiful public portfolios —
+        built for artists, galleries, and collectors.
+    </p>
+
+    <div class="waitlist-wrap" id="waitlist">
+        <form class="waitlist-form" id="heroForm">
+            <input type="email" name="email" placeholder="Enter your email address" required autocomplete="email">
+            <button type="submit">Join Waitlist</button>
+        </form>
+        <p class="form-note">Be the first to know when we launch. No spam, ever.</p>
+        <p class="form-success" id="heroSuccess">✓ You're on the list — we'll be in touch.</p>
+    </div>
+
+    <div class="hero-screenshot">
+        <div class="screen-frame">
+            <div class="screen-bar">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+            </div>
+            <img src="img/hero.jpg" alt="Masterpiece Registry — Artist Portfolio"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="screen-placeholder" style="display:none;">Screenshot coming soon</div>
+        </div>
+    </div>
+</header>
+
+<!-- FOR WHOM -->
+<section class="for-section" style="padding: 0;">
+    <div class="for-grid">
+        <div class="for-card">
+            <span class="for-icon">🎨</span>
+            <h3>Artists</h3>
+            <p>A professional home for your life's work — from studio to gallery to collector.</p>
+            <ul class="for-list">
+                <li>Artwork inventory &amp; records</li>
+                <li>Provenance &amp; certificates of authenticity</li>
+                <li>Custom portfolio website</li>
+                <li>QR labels for physical works</li>
+                <li>Offer &amp; inquiry management</li>
+            </ul>
+        </div>
+        <div class="for-card">
+            <span class="for-icon">🏛️</span>
+            <h3>Galleries</h3>
+            <p>Manage exhibitions, consignments, and artist relationships in one place.</p>
+            <ul class="for-list">
+                <li>Exhibition management</li>
+                <li>Consignment &amp; loan tracking</li>
+                <li>Professional invoicing</li>
+                <li>Location history per work</li>
+                <li>Wall layout calculator</li>
+            </ul>
+        </div>
+        <div class="for-card">
+            <span class="for-icon">🖼️</span>
+            <h3>Collectors</h3>
+            <p>Document, protect, and share your collection with confidence.</p>
+            <ul class="for-list">
+                <li>Full collection registry</li>
+                <li>Provenance documentation</li>
+                <li>Location &amp; loan history</li>
+                <li>Insurance-ready records</li>
+                <li>Secure digital certificates</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section>
+    <div class="container">
+
+        <div class="feature-row">
+            <div>
+                <p class="label">Portfolio &amp; Presence</p>
+                <h2 class="title">A Gallery-Quality Website.<br>Without the Agency.</h2>
+                <p class="body-text">
+                    Publish a stunning, customizable portfolio in minutes. Choose from editorial
+                    templates designed for the art world. Share your work publicly — or keep it
+                    private to your network.
+                </p>
+            </div>
+            <div class="screen-frame">
+                <div class="screen-bar">
+                    <div class="dot dot-r"></div>
+                    <div class="dot dot-y"></div>
+                    <div class="dot dot-g"></div>
+                </div>
+                <img src="img/portfolio.jpg" alt="Artist portfolio website"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="screen-placeholder" style="display:none;">Screenshot coming soon</div>
+            </div>
+        </div>
+
+        <hr class="rule">
+
+        <div class="feature-row flip" style="margin-top: 7rem;">
+            <div>
+                <p class="label">Inventory &amp; Provenance</p>
+                <h2 class="title">Every Work. Every Detail.<br>Every Movement.</h2>
+                <p class="body-text">
+                    From creation date to current owner, Masterpiece Registry captures the full
+                    story of each work. Generate certificates of authenticity and scan QR labels
+                    that link to a permanent digital record.
+                </p>
+            </div>
+            <div class="screen-frame">
+                <div class="screen-bar">
+                    <div class="dot dot-r"></div>
+                    <div class="dot dot-y"></div>
+                    <div class="dot dot-g"></div>
+                </div>
+                <img src="img/inventory.jpg" alt="Artwork inventory management"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="screen-placeholder" style="display:none;">Screenshot coming soon</div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+    <div class="container">
+        <p class="label">Early Access</p>
+        <h2 class="title">Be First to Experience It.</h2>
+        <p class="body-text">
+            We're putting the finishing touches on Masterpiece Registry.
+            Join the waitlist for early access and launch pricing.
+        </p>
+        <div class="waitlist-wrap">
+            <form class="waitlist-form" id="ctaForm">
+                <input type="email" name="email" placeholder="Enter your email address" required autocomplete="email">
+                <button type="submit">Get Early Access</button>
+            </form>
+            <p class="form-note">No spam. Unsubscribe any time.</p>
+            <p class="form-success" id="ctaSuccess">✓ You're on the list — we'll be in touch.</p>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <span class="footer-logo"><img src="img/logo.png" alt="Masterpiece Registry"></span>
+    <p>&copy; 2026 Masterpiece Registry. All rights reserved.</p>
+    <p><a href="mailto:hello@masterpieceregistry.com">hello@masterpieceregistry.com</a></p>
+</footer>
+
+<script>
+// ── Replace with your Formspree form ID from formspree.io ──────────────
+// Sign up free at https://formspree.io → New Form → copy the ID
+const FORMSPREE = 'https://formspree.io/f/xeelbpyy';
+
+function initForm(formId, successId) {
+    const form = document.getElementById(formId);
+    const msg  = document.getElementById(successId);
+    if (!form) return;
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn   = form.querySelector('button');
+        const email = form.querySelector('input[type=email]').value;
+        btn.textContent = '...';
+        btn.disabled = true;
+        try {
+            const res = await fetch(FORMSPREE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            if (res.ok) {
+                form.style.display = 'none';
+                form.nextElementSibling.style.display = 'none'; // hide note
+                msg.style.display = 'block';
+            } else {
+                btn.textContent = 'Try Again';
+                btn.disabled = false;
+            }
+        } catch {
+            btn.textContent = 'Try Again';
+            btn.disabled = false;
+        }
+    });
+}
+
+initForm('heroForm', 'heroSuccess');
+initForm('ctaForm',  'ctaSuccess');
+</script>
+
+</body>
+</html>
